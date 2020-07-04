@@ -18,8 +18,8 @@ import java.util.Map;
  * info=kingcall 传递给程序
  */
 
-@Configuration
-@EnableBatchProcessing
+//@Configuration
+//@EnableBatchProcessing
 public class JobParametersApplication implements StepExecutionListener {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
