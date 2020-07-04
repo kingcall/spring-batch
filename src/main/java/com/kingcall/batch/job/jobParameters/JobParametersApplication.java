@@ -1,4 +1,5 @@
-package com.kingcall.batch.job.listener;
+package com.kingcall.batch.job.jobParameters;
+
 
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -11,47 +12,55 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-//@Configuration
-//@EnableBatchProcessing
-public class JobListener implements JobExecutionListener {
+import java.util.Map;
+
+/**
+ * info=kingcall 传递给程序
+ */
+
+@Configuration
+@EnableBatchProcessing
+public class JobParametersApplication implements StepExecutionListener {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
 
     @Autowired
     private StepBuilderFactory stepBuilders;
+    Map<String, JobParameter> parameters;
 
     @Bean
-    public Job jobListenerGetJob() {
+    public Job parametersJob() {
         return jobBuilderFactory
                 .get(this.getClass().getSimpleName())
-                .listener(this)
-                .start(jobListenerStep1())
+                .start(parametersJobStep1())
                 .build()
                 ;
     }
 
     @Bean
-    public Step jobListenerStep1() {
+    public Step parametersJobStep1() {
         return stepBuilders
                 .get("step1")
+                .listener(this)
                 .tasklet(new Tasklet() {
                     @Override
                     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-                        System.out.println("hello spring batch JobListener 1");
+                        System.out.println(String.format("hello spring batch parameters %s", parameters.get("info")));
                         return RepeatStatus.FINISHED;
                     }
                 })
                 .build()
                 ;
     }
+
     @Override
-    public void beforeJob(JobExecution jobExecution) {
-        System.out.println("============================== beforeJob ===================================");
+    public void beforeStep(StepExecution stepExecution) {
+        parameters = stepExecution.getJobParameters().getParameters();
+
     }
 
     @Override
-    public void afterJob(JobExecution jobExecution) {
-        System.out.println("============================== afterJob ===================================");
-
+    public ExitStatus afterStep(StepExecution stepExecution) {
+        return null;
     }
 }
