@@ -19,6 +19,8 @@ spring:
         password: www1234
   batch:
     initialize-schema: always
+#    job:
+#      names: nestedChild1Job
 management:
   endpoints:
     web:
