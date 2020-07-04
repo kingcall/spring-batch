@@ -1,6 +1,4 @@
 package com.kingcall.batch.job.itemReaderAndWriter.reader;
-import	java.util.HashMap;
-import	java.util.Map;
 
 import com.kingcall.batch.models.Person;
 import org.springframework.batch.core.Job;
@@ -8,22 +6,24 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.item.*;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.Order;
 import org.springframework.batch.item.database.support.MySqlPagingQueryProvider;
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.mapping.DefaultLineMapper;
+import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-//@Configuration
-//@EnableBatchProcessing
-public class JdbcBatchItemReader {
+@Configuration
+@EnableBatchProcessing
+public class FlatFileBatchItemReader {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
     @Autowired
@@ -47,7 +47,7 @@ public class JdbcBatchItemReader {
         return stepBuilders
                 .get("itemReaderJobReadStep1")
                 .<Person, Person>chunk(1)
-                .reader(jdbcReader())
+                .reader(flatFileReader())
                 .writer(list -> {
                     list.forEach(line -> System.out.println(String.format("current item is %s", line.toString())));
                 })
@@ -56,26 +56,27 @@ public class JdbcBatchItemReader {
     }
 
     @Bean
-    public JdbcPagingItemReader<Person> jdbcReader() {
-        JdbcPagingItemReader<Person> jdbcPagingItemReader = new JdbcPagingItemReader<>();
-        jdbcPagingItemReader.setDataSource(dataSource);
-        jdbcPagingItemReader.setFetchSize(100);
-        jdbcPagingItemReader.setRowMapper(((resultSet, row) -> {
-            return Person
-                    .builder()
-                    .id(resultSet.getInt("id"))
-                    .firstName(resultSet.getString("firstname"))
-                    .lastName(resultSet.getString("lastname"))
+    public FlatFileItemReader<Person> flatFileReader() {
+        FlatFileItemReader<Person> flatFileItemReader = new FlatFileItemReader<>();
+        flatFileItemReader.setResource(new ClassPathResource("csv/person.csv"));
+        // 跳过表头
+        flatFileItemReader.setLinesToSkip(1);
+        // 分隔符
+        DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
+        tokenizer.setNames(new String[] {"id","firstname","lastname"});
+        // line mapping
+        DefaultLineMapper<Person> lineMapper = new DefaultLineMapper<>();
+        lineMapper.setLineTokenizer(tokenizer);
+        lineMapper.setFieldSetMapper(fieldSet -> {
+            return Person.builder()
+                    .id(fieldSet.readInt("id"))
+                    .firstName(fieldSet.readString("firstname"))
+                    .lastName(fieldSet.readString("lastname"))
                     .build();
-        }));
-        MySqlPagingQueryProvider provider = new MySqlPagingQueryProvider();
-        provider.setFromClause("from person");
-        provider.setSelectClause("id,firstName,lastname");
-        Map<String, Order> order = new HashMap<> ();
-        order.put("id", Order.DESCENDING);
-        provider.setSortKeys(order);
-        jdbcPagingItemReader.setQueryProvider(provider);
-        return jdbcPagingItemReader;
+        });
+
+        flatFileItemReader.setLineMapper(lineMapper);
+        return flatFileItemReader;
     }
 }
 

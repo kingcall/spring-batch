@@ -1,2 +1,3 @@
-John, Doe
-Jane, Doe
+id,firstname,lastname
+1,John,Doe
+2,Jane,Doe
