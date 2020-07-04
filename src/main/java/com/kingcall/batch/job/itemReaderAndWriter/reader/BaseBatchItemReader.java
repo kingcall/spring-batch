@@ -17,9 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
-@EnableBatchProcessing
-public class BatchItemReader {
+//@Configuration
+//@EnableBatchProcessing
+public class BaseBatchItemReader {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
 
