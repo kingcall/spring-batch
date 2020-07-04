@@ -22,8 +22,8 @@ import org.springframework.transaction.PlatformTransactionManager;
  * 前面所有job的代码都是在一个文件里的，其实每个step 应该有自己的代码
  */
 
-@Configuration
-@EnableBatchProcessing
+//@Configuration
+//@EnableBatchProcessing
 public class HelloWorldSpringBtachNestedParentJob {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;

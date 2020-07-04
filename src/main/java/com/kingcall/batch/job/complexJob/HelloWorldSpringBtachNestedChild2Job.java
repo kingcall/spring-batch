@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * 前面所有job的代码都是在一个文件里的，其实每个step 应该有自己的代码
  */
 
-@Configuration
+//@Configuration
 public class HelloWorldSpringBtachNestedChild2Job {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
