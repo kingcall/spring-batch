@@ -19,8 +19,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-@Configuration
-@EnableBatchProcessing
+//@Configuration
+//@EnableBatchProcessing
 public class MultiResourceItemReaderJob {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
