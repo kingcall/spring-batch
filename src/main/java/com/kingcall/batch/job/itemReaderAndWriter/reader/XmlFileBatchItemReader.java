@@ -9,15 +9,19 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.oxm.xstream.XStreamMarshaller;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
-@Configuration
-@EnableBatchProcessing
+//@Configuration
+//@EnableBatchProcessing
 public class XmlFileBatchItemReader {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
@@ -29,16 +33,16 @@ public class XmlFileBatchItemReader {
 
 
     @Bean
-    public Job jdbcItemReaderJob() {
+    public Job XmlFileItemReaderJob() {
         return jobBuilderFactory
                 .get(this.getClass().getSimpleName())
-                .start(jdbcItemReaderJobStep1())
+                .start(xmlFileItemReaderJobStep1())
                 .build()
                 ;
     }
 
     @Bean
-    public Step jdbcItemReaderJobStep1() {
+    public Step xmlFileItemReaderJobStep1() {
         return stepBuilders
                 .get("itemReaderJobReadStep1")
                 .<Person, Person>chunk(1)
@@ -51,27 +55,21 @@ public class XmlFileBatchItemReader {
     }
 
     @Bean
-    public FlatFileItemReader<Person> flatFileReader() {
-        FlatFileItemReader<Person> flatFileItemReader = new FlatFileItemReader<>();
-        flatFileItemReader.setResource(new ClassPathResource("csv/person.csv"));
-        // 跳过表头
-        flatFileItemReader.setLinesToSkip(1);
-        // 分隔符
-        DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
-        tokenizer.setNames(new String[] {"id","firstname","lastname"});
-        // line mapping
-        DefaultLineMapper<Person> lineMapper = new DefaultLineMapper<>();
-        lineMapper.setLineTokenizer(tokenizer);
-        lineMapper.setFieldSetMapper(fieldSet -> {
-            return Person.builder()
-                    .id(fieldSet.readInt("id"))
-                    .firstName(fieldSet.readString("firstname"))
-                    .lastName(fieldSet.readString("lastname"))
-                    .build();
-        });
+    public StaxEventItemReader<Person> flatFileReader() {
+        StaxEventItemReader<Person> reader = new StaxEventItemReader<>();
 
-        flatFileItemReader.setLineMapper(lineMapper);
-        return flatFileItemReader;
+        reader.setResource(new ClassPathResource("csv/person.xml"));
+        reader.setFragmentRootElementName("person");
+
+        XStreamMarshaller unMarshaller = new XStreamMarshaller();
+        Map<String, Class> mapClass = new HashMap<>();
+
+        mapClass.put("person", Person.class);
+
+        unMarshaller.setAliases(mapClass);
+
+        reader.setUnmarshaller(unMarshaller);
+        return reader;
     }
 }
 

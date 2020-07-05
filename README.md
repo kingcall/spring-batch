@@ -9,6 +9,10 @@
 ### step
 #### tasklet 形式的简单step
 #### chunk-based step
+##### itemReader
+###### JDBC
+###### FlatFile
+###### XML
 ## spring-batch 简单任务
 ## spring-batch 复杂任务
 ### 嵌套任务

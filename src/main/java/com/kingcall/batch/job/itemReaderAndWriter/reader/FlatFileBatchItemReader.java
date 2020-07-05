@@ -21,8 +21,8 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-@Configuration
-@EnableBatchProcessing
+//@Configuration
+//@EnableBatchProcessing
 public class FlatFileBatchItemReader {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
@@ -34,16 +34,16 @@ public class FlatFileBatchItemReader {
 
 
     @Bean
-    public Job jdbcItemReaderJob() {
+    public Job flatFileItemReaderJob() {
         return jobBuilderFactory
                 .get(this.getClass().getSimpleName())
-                .start(jdbcItemReaderJobStep1())
+                .start(flatFileItemReaderJobStep1())
                 .build()
                 ;
     }
 
     @Bean
-    public Step jdbcItemReaderJobStep1() {
+    public Step flatFileItemReaderJobStep1() {
         return stepBuilders
                 .get("itemReaderJobReadStep1")
                 .<Person, Person>chunk(1)
