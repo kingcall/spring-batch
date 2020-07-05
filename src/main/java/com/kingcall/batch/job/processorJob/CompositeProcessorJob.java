@@ -21,8 +21,8 @@ import org.springframework.core.io.ClassPathResource;
 import java.util.Arrays;
 import java.util.List;
 
-@Configuration
-@EnableBatchProcessing
+//@Configuration
+//@EnableBatchProcessing
 public class CompositeProcessorJob {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
