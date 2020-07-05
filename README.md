@@ -10,15 +10,18 @@
 #### tasklet 形式的简单step
 #### chunk-based step
 ##### itemReader
+- read individually
 ###### JDBC
 ###### FlatFile
 ###### XML
 ###### multisource
+
+##### writer
+- write with chunk
 #### 异常处理及重启机制
 - 对于chunk-oriented step，Spring Batch提供了管理状态的工具。如何在一个步骤中管理状态是通过ItemStream接口为开发人员提供访问权限保持状态的组件。
 这里提到的这个组件是ExecutionContext实际上它是键值对的映射。map存储特定步骤的状态。该ExecutionContext使重启步骤成为可能，因为状态在JobRepository中持久存在。
 - 执行期间出现错误时，最后一个状态将更新为JobRepository。下次作业运行时，最后一个状态将用于填充ExecutionContext然后可以继续从上次离开的地方开始运行。
-
 ## spring-batch 简单任务
 ## spring-batch 复杂任务
 ### 嵌套任务

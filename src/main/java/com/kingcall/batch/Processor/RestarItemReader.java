@@ -22,7 +22,7 @@ public class RestarItemReader implements ItemStreamReader<Person> {
 
     public RestarItemReader() {
         reader.setResource(new ClassPathResource("csv/person.csv"));
-        // 不知道问什么第一行没跳过
+        // 不知道为什么第一行没跳过
         reader.setLinesToSkip(1);
 
         DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
