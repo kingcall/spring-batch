@@ -28,8 +28,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-@Configuration
-@EnableBatchProcessing
+//@Configuration
+//@EnableBatchProcessing
 public class MultiResourceItemWriterJob {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
