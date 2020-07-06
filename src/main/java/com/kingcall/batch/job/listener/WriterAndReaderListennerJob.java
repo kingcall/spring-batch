@@ -18,8 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.String.format;
-@Configuration
-@EnableBatchProcessing
+//@Configuration
+//@EnableBatchProcessing
 public class WriterAndReaderListennerJob {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
