@@ -1,12 +1,17 @@
-package com.kingcall.batch;
+package com.kingcall.batch.job.schedule;
 
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
@@ -16,6 +21,16 @@ import static java.lang.String.format;
  * 可以使用XNL 的方式运行job
  */
 public class JobLaunch {
+
+    @Autowired
+    JobLauncher launcher;
+    @Autowired
+    ApplicationContext context;
+
+    /**
+     * 可以自己单独运行,运行配置在xml 中的job
+     * @param args
+     */
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext(
                 "batch-demo.xml");
@@ -35,10 +50,12 @@ public class JobLaunch {
 
     }
 
-
+    /**
+     * 可以以运行在代码中写好的job
+     * @param args
+     */
     public static void main2(String[] args) {
         String jobName = args[0];
-
         try {
             ConfigurableApplicationContext context = SpringApplication.run(JobLaunch.class, args);
             JobRegistry jobRegistry = context.getBean(JobRegistry.class);
@@ -56,4 +73,6 @@ public class JobLaunch {
     private static JobParameters createJobParams() {
         return new JobParametersBuilder().addDate("date", new Date()).toJobParameters();
     }
+
+
 }

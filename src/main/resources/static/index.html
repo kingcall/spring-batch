@@ -1,0 +1,22 @@
+<html>
+    <head>spring_batch</head>
+    <body>
+        <input type="text" id="msg">
+        <button onclick="runJob()"> Run Job </button>
+        <script>
+            var baseurl = "http://localhost/";
+            var http = new XMLHttpRequest();
+            function runJob() {
+                var msg = document.getElementById("msg").value;
+                var url = baseurl + "/job/" + msg;
+                http.open("GET", url, true);
+                http.send();
+                http.onreadystatechange=function () {
+                    if (this.readyState == 4 && this.status == 200){
+                        console.log("Job status " + this.responseText)
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -4,11 +4,22 @@ import com.kingcall.batch.utils.CommonConsoleItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
+import org.springframework.batch.core.converter.DefaultJobParametersConverter;
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.launch.support.SimpleJobOperator;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.*;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,7 +29,22 @@ import java.util.List;
 
 @Configuration
 @EnableBatchProcessing
-public class SkipListenerJob implements SkipListener {
+public class SkipListenerJob implements SkipListener, ApplicationContextAware {
+
+    @Autowired
+    JobLauncher launcher;
+    @Autowired
+    JobRepository jobRepository;
+    @Autowired
+    JobExplorer jobExplorer;
+    @Autowired
+    JobRegistry jobRegistry;
+
+
+    @Autowired
+    ApplicationContext context;
+
+
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
 
@@ -29,13 +55,33 @@ public class SkipListenerJob implements SkipListener {
     CommonConsoleItemWriter writer;
 
     @Bean
-    public Job skiob() {
+    public Job skipJob() {
         return jobBuilderFactory
                 .get(this.getClass().getSimpleName())
                 .start(step1())
                 .build()
                 ;
     }
+
+    @Bean
+    public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(){
+        JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor = new JobRegistryBeanPostProcessor();
+        jobRegistryBeanPostProcessor.setJobRegistry(jobRegistry);
+        jobRegistryBeanPostProcessor.setBeanFactory(context.getAutowireCapableBeanFactory());
+        return jobRegistryBeanPostProcessor;
+    }
+
+    @Bean
+    public JobOperator jobOperator() {
+        SimpleJobOperator simpleJobOperator = new SimpleJobOperator();
+        simpleJobOperator.setJobLauncher(launcher);
+        simpleJobOperator.setJobParametersConverter(new DefaultJobParametersConverter());
+        simpleJobOperator.setJobRepository(jobRepository);
+        simpleJobOperator.setJobExplorer(jobExplorer);
+        simpleJobOperator.setJobRegistry(jobRegistry);
+        return simpleJobOperator;
+    }
+
 
     @Bean
     public Step step1() {
@@ -94,6 +140,11 @@ public class SkipListenerJob implements SkipListener {
     @Override
     public void onSkipInProcess(Object o, Throwable throwable) {
         System.out.println("has skiped "+o +" on processing");
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
     }
 
     class InputItemReader implements ItemReader<String> {

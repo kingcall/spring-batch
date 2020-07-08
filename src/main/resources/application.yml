@@ -19,8 +19,10 @@ spring:
         password: www1234
   batch:
     initialize-schema: always
-#    job:
-#      names: nestedChild1Job
+    job:
+      # 自动启动job 设置为false，默认所有的iob 都会被启动
+      enabled: false
+      #names: nestedChild1Job
 management:
   endpoints:
     web:
