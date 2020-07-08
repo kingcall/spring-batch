@@ -1,6 +1,5 @@
 package com.kingcall.batch.job.errorHadle;
 
-import com.kingcall.batch.job.itemReaderAndWriter.reader.BaseBatchItemReader;
 import com.kingcall.batch.utils.CommonConsoleItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -15,9 +14,10 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-//@Configuration
-//@EnableBatchProcessing
-public class RetryJob {
+
+@Configuration
+@EnableBatchProcessing
+public class SkipJob {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
 
@@ -28,7 +28,7 @@ public class RetryJob {
     CommonConsoleItemWriter writer;
 
     @Bean
-    public Job retryDemoJob() {
+    public Job skipDemoJob() {
         return jobBuilderFactory
                 .get(this.getClass().getSimpleName())
                 .start(step1())
@@ -45,8 +45,8 @@ public class RetryJob {
                 .processor(process())
                 .writer(writer)
                 .faultTolerant()
-                .retry(RuntimeException.class)// If a retry limit is provided then retryable exceptions must also be specified
-                .retryLimit(3)
+                .skip(RuntimeException.class)// If a retry limit is provided then retryable exceptions must also be specified
+                .skipLimit(3)
                 .build()
                 ;
     }
