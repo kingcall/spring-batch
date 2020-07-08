@@ -9,6 +9,6 @@ import java.util.List;
 public class CommonConsoleItemWriter implements ItemWriter {
     @Override
     public void write(List list) throws Exception {
-        list.forEach(line -> System.out.println(String.format("current item is %s", line.toString())));
+        list.forEach(line -> System.out.println(String.format("current write item is %s", line.toString())));
     }
 }

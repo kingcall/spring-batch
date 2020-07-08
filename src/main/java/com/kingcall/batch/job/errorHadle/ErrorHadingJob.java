@@ -16,6 +16,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
 
+/**
+ * 这个例子没有成功
+ */
 //@Configuration
 //@EnableBatchProcessing
 public class ErrorHadingJob {
@@ -61,14 +64,27 @@ public class ErrorHadingJob {
             @Override
             public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
                 Map<String, Object> stepExecutionContext = chunkContext.getStepContext().getStepExecutionContext();
-                if (stepExecutionContext.containsKey("first")) {
-                    System.out.println("second will sucess ..... ");
+                if (stepExecutionContext.containsKey("first")){
+                    System.out.println("second will sucess");
                     return RepeatStatus.FINISHED;
-                } else {
-                    System.out.println("first will fail ....");
+                }else {
+                    System.out.println("first will fail");
                     chunkContext.getStepContext().getStepExecutionContext().put("first", true);
                     throw new RuntimeException("Errors occurs");
                 }
+
+            }
+        };
+    }
+
+    @Bean
+    @StepScope
+    public Tasklet task2() {
+        return new Tasklet() {
+            @Override
+            public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
+                System.out.println("step 执行");
+                return RepeatStatus.FINISHED;
             }
         };
     }

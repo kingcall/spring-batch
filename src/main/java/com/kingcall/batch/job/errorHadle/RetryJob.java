@@ -46,16 +46,16 @@ public class RetryJob {
                 .writer(writer)
                 .faultTolerant()
                 .retry(RuntimeException.class)// If a retry limit is provided then retryable exceptions must also be specified
-                .retryLimit(2)
+                .retryLimit(3)
                 .build()
                 ;
     }
 
     public ItemProcessor process(){
         return new ItemProcessor<String, String>() {
+            int attemptCount = 0;
             @Override
             public String process(String s) throws Exception {
-                int attemptCount = 0;
                 System.out.println("processing item " + s);
                 if (s.equalsIgnoreCase("6")) {
                     attemptCount++;
@@ -65,7 +65,6 @@ public class RetryJob {
                     } else {
                         System.out.println("Processed " + attemptCount + " times fail .");
                         throw new RuntimeException("retry exception");
-
                     }
                 } else {
                     return String.valueOf(Integer.valueOf(s) * -1);
