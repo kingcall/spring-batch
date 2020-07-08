@@ -1,7 +1,8 @@
-package com.kingcall.batch.job.errorHadle;
+package com.kingcall.batch.job.listener;
 
 import com.kingcall.batch.utils.CommonConsoleItemWriter;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -15,9 +16,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-//@Configuration
-//@EnableBatchProcessing
-public class SkipJob {
+@Configuration
+@EnableBatchProcessing
+public class SkipListenerJob implements SkipListener {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
 
@@ -28,7 +29,7 @@ public class SkipJob {
     CommonConsoleItemWriter writer;
 
     @Bean
-    public Job skipDemoJob() {
+    public Job skiob() {
         return jobBuilderFactory
                 .get(this.getClass().getSimpleName())
                 .start(step1())
@@ -47,6 +48,7 @@ public class SkipJob {
                 .faultTolerant()
                 .skip(RuntimeException.class)// If a retry limit is provided then retryable exceptions must also be specified
                 .skipLimit(3)
+                .listener(this)
                 .build()
                 ;
     }
@@ -78,6 +80,22 @@ public class SkipJob {
         return new InputItemReader(data);
 
     }
+
+    @Override
+    public void onSkipInRead(Throwable throwable) {
+
+    }
+
+    @Override
+    public void onSkipInWrite(Object o, Throwable throwable) {
+        System.out.println("has skiped "+o +" on write");
+    }
+
+    @Override
+    public void onSkipInProcess(Object o, Throwable throwable) {
+        System.out.println("has skiped "+o +" on processing");
+    }
+
     class InputItemReader implements ItemReader<String> {
 
 
@@ -96,6 +114,8 @@ public class SkipJob {
             }
         }
     }
+
+
 
 
 }
