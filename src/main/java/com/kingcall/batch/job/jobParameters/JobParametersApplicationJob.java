@@ -20,7 +20,7 @@ import java.util.Map;
 
 //@Configuration
 //@EnableBatchProcessing
-public class JobParametersApplication implements StepExecutionListener {
+public class JobParametersApplicationJob implements StepExecutionListener {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
 

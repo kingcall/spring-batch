@@ -17,7 +17,7 @@ import org.springframework.batch.core.job.flow.Flow;
 
 //@Configuration
 //@EnableBatchProcessing
-public class HelloWorldSpringBtachFlowJob {
+public class FlowJob {
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
 

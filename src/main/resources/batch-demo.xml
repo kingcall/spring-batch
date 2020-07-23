@@ -9,16 +9,24 @@
             default-autowire="byName">
     <bean:import resource="batchApplicationContext.xml"/>
 
-    <job id="helloWorldJob">
+<!--    <job id="helloWorldJob">-->
+<!--        <step id="step_hello" next="step_world">-->
+<!--            &lt;!&ndash;  <tasklet ref="hello" transaction-manager="transactionManager"></tasklet>&ndash;&gt;-->
+<!--            <tasklet ref="hello"></tasklet>-->
+<!--        </step>-->
+<!--        <step id="step_world">-->
+<!--            <tasklet ref="world" transaction-manager="transactionManager"></tasklet>-->
+<!--        </step>-->
+<!--    </job>-->
+
+    <job id="indiaJob">
         <step id="step_hello" next="step_world">
-            <!--  <tasklet ref="hello" transaction-manager="transactionManager"></tasklet>-->
             <tasklet ref="hello"></tasklet>
         </step>
         <step id="step_world">
             <tasklet ref="world" transaction-manager="transactionManager"></tasklet>
         </step>
     </job>
-
 
     <bean:bean id="hello" class="com.kingcall.batch.tasklets.WriteTasklet">
         <bean:property name="message" value="Hello "></bean:property>

@@ -27,8 +27,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-@Configuration
-@EnableScheduling
+//@Configuration
+//@EnableScheduling
 public class ScheduleJob {
     long i = 1;
     @Autowired
@@ -39,6 +39,7 @@ public class ScheduleJob {
 
     @Scheduled(fixedDelay = 1000)
     public void cchedule() {
+        // 需要注意的是你这里必须要有一个名为这个的job
         runJob("skipJob");
     }
 

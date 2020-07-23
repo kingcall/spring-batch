@@ -84,13 +84,13 @@ public class StepListenerJob {
 
     class MyStepistener{
         @BeforeStep
-        public void beforeStep(ChunkContext chunkContext) {
-            System.out.println(String.format("============================== %s before step ===================================", chunkContext.getStepContext().getStepName()));
+        public void beforeStep() {
+            System.out.println(String.format("============================== %s before step ===================================",""));
         }
 
         @AfterStep
-        public void afterStep(ChunkContext chunkContext) {
-            System.out.println(String.format("============================== %s after step ===================================", chunkContext.getStepContext().getStepName()));
+        public void afterStep() {
+            System.out.println(String.format("============================== %s after step ===================================",""));
         }
     }
 
